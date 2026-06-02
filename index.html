@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Smart Workspace</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Pretendard 등 깔끔한 폰트 적용 */
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css');
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- HEADER -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center gap-2">
+                        <!-- AI Brand Logo -->
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-cyan-400 flex items-center justify-center text-white shadow-md shadow-brand-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <span class="text-xl font-bold bg-gradient-to-r from-brand-700 to-brand-500 bg-clip-text text-transparent">AI Smart Workspace</span>
+                    </div>
+                </div>
+                
+                <!-- Navigation Desktop -->
+                <nav class="hidden md:flex space-x-1 items-center">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-brand-600 bg-brand-50 transition-all flex items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" />
+                        </svg>
+                        대시보드
+                    </button>
+                    <button onclick="switchTab('calculator')" id="nav-calculator" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-brand-600 hover:bg-slate-50 transition-all flex items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                        AI 계산기
+                    </button>
+                    <button onclick="switchTab('notepad')" id="nav-notepad" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-brand-600 hover:bg-slate-50 transition-all flex items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        AI 메모장
+                    </button>
+                    <button onclick="switchTab('calendar')" id="nav-calendar" class="nav-btn px-4 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:text-brand-600 hover:bg-slate-50 transition-all flex items-center gap-1.5">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        일정 관리
+                    </button>
+                </nav>
+
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-slate-600 hover:text-brand-600 focus:outline-none">
+                        <svg id="menu-icon" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 py-3 space-y-2">
+            <button onclick="switchTab('dashboard'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-lg text-base font-semibold text-brand-600 bg-brand-50 flex items-center gap-2">대시보드</button>
+            <button onclick="switchTab('calculator'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-lg text-base font-semibold text-slate-600 hover:bg-slate-50 flex items-center gap-2">AI 계산기</button>
+            <button onclick="switchTab('notepad'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-lg text-base font-semibold text-slate-600 hover:bg-slate-50 flex items-center gap-2">AI 메모장</button>
+            <button onclick="switchTab('calendar'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-lg text-base font-semibold text-slate-600 hover:bg-slate-50 flex items-center gap-2">일정 관리</button>
+        </div>
+    </header>
+
+    <!-- CONTENT WRAPPER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- 1. DASHBOARD TAB -->
+        <section id="tab-dashboard" class="tab-content space-y-6">
+            <!-- Welcome Banner -->
+            <div class="bg-gradient-to-r from-brand-700 via-brand-600 to-blue-500 rounded-2xl p-6 sm:p-8 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div class="space-y-2">
+                    <span class="bg-brand-500/30 text-brand-100 text-xs px-3 py-1 rounded-full font-semibold uppercase tracking-wider backdrop-blur-sm">Smart Workspace</span>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">안녕하세요, AI 스마트 워크스페이스입니다.</h1>
+                    <p class="text-brand-100 text-sm sm:text-base max-w-xl">AI 기술이 융합된 나만의 강력한 웹 도구들로 생산성을 극대화해 보세요.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl flex items-center gap-3">
+                    <span class="flex h-3 w-3 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-sm font-semibold text-white" id="google-sync-status">Google Calendar 연동 대기중</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- AI Assistant Chatbot Panel (2 Columns) -->
+                <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[500px]">
+                    <!-- Panel Header -->
+                    <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-brand-100 flex items-center justify-center text-brand-600 font-bold">AI</div>
+                        <div>
+                            <h2 class="font-bold text-slate-800">지능형 워크스페이스 어시스턴트</h2>
+                            <p class="text-xs text-slate-500">계산, 메모 요약, 자연어 일정 등록을 도와줍니다.</p>
+                        </div>
+                    </div>
+                    <!-- Chat Message Area -->
+                    <div id="chat-messages" class="flex-grow overflow-y-auto p-6 space-y-4">
+                        <div class="flex gap-3 max-w-[85%]">
+                            <div class="w-8 h-8 rounded-lg bg-brand-100 flex-shrink-0 flex items-center justify-center text-brand-600 font-bold text-xs">AI</div>
+                            <div class="bg-slate-100 text-slate-700 px-4 py-2.5 rounded-2xl rounded-tl-none text-sm leading-relaxed shadow-sm">
+                                안녕하세요! AI 도우미입니다. 이곳에서 질문하시거나, 메모를 관리하고, <span class="font-semibold text-brand-700">"내일 오후 3시 팀 미팅 일정 추가"</span>와 같이 지시하시면 제가 분석해서 처리해 드립니다.
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Chat Input Area -->
+                    <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-2xl">
+                        <form id="chat-form" class="flex gap-2" onsubmit="handleChatSubmit(event)">
+                            <input type="text" id="chat-input" placeholder="AI 비서에게 무엇이든 요청하세요..." class="flex-grow px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 shadow-inner">
+                            <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold px-5 py-3 rounded-xl text-sm transition-colors flex items-center gap-1 shadow-md shadow-brand-100">
+                                전송
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Fast Info Sidebar (1 Column) -->
+                <div class="space-y-6">
+                    <!-- Stat Widget - Quick Add -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                        <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-1.5 text-base">
+                            <span class="w-1.5 h-4 bg-brand-600 rounded"></span>
+                            자연어 빠른 일정 등록
+                        </h3>
+                        <p class="text-xs text-slate-500 mb-4 leading-relaxed">자연어로 입력을 적어두시면 AI가 판단하여 캘린더 일정을 자동 스캔해 줍니다.</p>
+                        <div class="space-y-2">
+                            <input type="text" id="natural-input-quick" placeholder="예: 목요일 오전 10시 기획 회의" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            <button onclick="processQuickSchedule()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow transition-colors">AI 해석 및 등록</button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Memo Summary List -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col h-[280px]">
+                        <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-1.5 text-base justify-between">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-1.5 h-4 bg-emerald-500 rounded"></span>
+                                최근 저장된 메모
+                            </div>
+                            <span onclick="switchTab('notepad')" class="text-xs text-brand-600 hover:underline cursor-pointer">더보기 &rarr;</span>
+                        </h3>
+                        <div id="quick-memo-list" class="space-y-3 overflow-y-auto flex-grow pr-1">
+                            <!-- JS Inject -->
+                            <p class="text-xs text-slate-400 text-center py-8">등록된 메모가 없습니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. CALCULATOR TAB -->
+        <section id="tab-calculator" class="tab-content hidden space-y-6">
+            <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6">
+                <!-- Calculator UI Panel -->
+                <div class="md:col-span-5 bg-white rounded-2xl border border-slate-200 p-6 shadow-lg">
+                    <!-- Calculator Header -->
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="p-2 rounded-lg bg-brand-100 text-brand-600">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                            </svg>
+                        </span>
+                        <div>
+                            <h2 class="font-bold text-slate-800 text-lg">스마트 연산 계산기</h2>
+                            <p class="text-xs text-slate-500">일반적인 연산 및 특수 연산 가능</p>
+                        </div>
+                    </div>
+
+                    <!-- Output Screens -->
+                    <div class="bg-slate-900 rounded-2xl p-4 mb-4 text-right font-mono flex flex-col justify-end min-h-[110px] shadow-inner relative overflow-hidden">
+                        <div class="absolute top-2 left-2 text-[10px] text-slate-400/80 font-sans border border-slate-700/60 rounded px-1.5 py-0.5">MATH SCREEN</div>
+                        <div id="calc-exp" class="text-sm text-slate-400 truncate mb-1 min-h-[20px] tracking-wide"></div>
+                        <div id="calc-display" class="text-3xl text-white font-bold tracking-tight select-all">0</div>
+                    </div>
+
+                    <!-- Pad Grid -->
+                    <div class="grid grid-cols-4 gap-2.5">
+                        <button onclick="calcClear()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold p-4 rounded-xl transition-colors text-lg col-span-2">C</button>
+                        <button onclick="calcBack()" class="bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold p-4 rounded-xl transition-colors text-lg">⌫</button>
+                        <button onclick="calcPress('/')" class="bg-brand-100 hover:bg-brand-200 text-brand-700 font-bold p-4 rounded-xl transition-colors text-lg">/</button>
+
+                        <button onclick="calcPress('7')" class="bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold p-4 rounded-xl transition-colors text-lg shadow-sm">7</button>
+                        <button onclick="calcPress('8')" class="bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold p-4 rounded-xl transition-colors text-lg shadow-sm">8</button>
+                        <button onclick="calcPress('9')" class="bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold p-4 rounded-xl transition-colors text-lg shadow-sm">9</button>
+                        <button onclick="calcPress('*')" class="bg-brand-100 hover:bg-brand-200 text-brand-700 font-bold p-4 rounded-xl transition-colors text-lg">×</button>
+
+                        <button onclick="calcPress('4')" class="bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold p-4 rounded-xl transition-colors text-lg shadow-sm">4</button>
+                        <button onclick="calcPress('5')" class="bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold p-4 rounded-xl transition-colors text-lg shadow-sm">5</button>
+                        <button onclick="calcPress('6')" class="bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold p-4 rounded-xl transition-colors text-lg shadow-sm">6</button>
+                        <button onclick="calcPress('-')" class="bg-brand-100 hover:bg-brand-200 text-brand-700 font-bold p-4 rounded-xl transition-colors text-lg">−</button>
+
+                        <button onclick="calcPress('1')" class="bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold p-4 rounded-xl transition-colors text-lg shadow-sm">1</button>
+                        <button onclick="calcPress('2')" class="bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold p-4 rounded-xl transition-colors text-lg shadow-sm">2</button>
+                        <button onclick="calcPress('3')" class="bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold p-4 rounded-xl transition-colors text-lg shadow-sm">3</button>
+                        <button onclick="calcPress('+')" class="bg-brand-100 hover:bg-brand-200 text-brand-700 font-bold p-4 rounded-xl transition-colors text-lg">+</button>
+
+                        <button onclick="calcPress('0')" class="bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold p-4 rounded-xl transition-colors text-lg shadow-sm col-span-2">0</button>
+                        <button onclick="calcPress('.')" class="bg-slate-50 hover:bg-slate-100 text-slate-800 font-semibold p-4 rounded-xl transition-colors text-lg shadow-sm">.</button>
+                        <button onclick="calcCalculate()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold p-4 rounded-xl transition-colors text-lg shadow-md shadow-brand-100">=</button>
+                    </div>
+                </div>
+
+                <!-- AI Explainer / Formula Analyst Board -->
+                <div class="md:col-span-7 flex flex-col gap-4">
+                    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex-grow">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="font-bold text-slate-800 flex items-center gap-1.5">
+                                <span class="p-1 rounded-md bg-brand-100 text-brand-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                                    </svg>
+                                </span>
+                                AI 수학적 해석 패널
+                            </h3>
+                            <button onclick="analyzeFormula()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition-colors flex items-center gap-1">
+                                <span>⚡ AI 해설 요청</span>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-4 leading-relaxed">계산기에 입력된 최종 수식을 AI가 논리적으로 분석해 주고 실생활 응용 분야를 알려줍니다.</p>
+                        
+                        <div id="ai-calc-explanation" class="bg-slate-50 border border-slate-200/80 rounded-xl p-5 min-h-[220px] text-sm text-slate-600 leading-relaxed flex flex-col justify-center items-center">
+                            <div class="text-center space-y-2 max-w-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-slate-300 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 .364l-.707 .707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                                </svg>
+                                <p class="font-semibold text-slate-700">분석할 수식이 아직 제출되지 않았습니다.</p>
+                                <p class="text-xs text-slate-400">계산기에서 수식을 입력한 뒤, 우측 상단의 [AI 해설 요청] 버튼을 눌러주세요.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Preset Math Operations -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2.5">AI 특수 추천 계산 수식</span>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <button onclick="injectPresetFormula('50000 * 1.1')" class="bg-white border border-slate-200 hover:border-brand-400 text-left p-2.5 rounded-lg text-xs font-semibold text-slate-700 shadow-sm transition-all">
+                                <span class="block text-[10px] text-brand-600">세율 적용</span>
+                                50,000원에 부가세 10%
+                            </button>
+                            <button onclick="injectPresetFormula('120 * 0.85')" class="bg-white border border-slate-200 hover:border-brand-400 text-left p-2.5 rounded-lg text-xs font-semibold text-slate-700 shadow-sm transition-all">
+                                <span class="block text-[10px] text-brand-600">할인율 계산</span>
+                                정가 120원 15% 할인
+                            </button>
+                            <button onclick="injectPresetFormula('1.05 * 1.05 * 1.05')" class="bg-white border border-slate-200 hover:border-brand-400 text-left p-2.5 rounded-lg text-xs font-semibold text-slate-700 shadow-sm transition-all">
+                                <span class="block text-[10px] text-brand-600">복리 이자</span>
+                                연리 5% 3년 복리값
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. NOTEPAD TAB -->
+        <section id="tab-notepad" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left: Memo Form & List -->
+                <div class="lg:col-span-5 space-y-4">
+                    <!-- New Memo Form -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-slate-800 text-base flex items-center gap-1">
+                                <span class="w-1.5 h-4 bg-brand-600 rounded"></span>
+                                새 메모 작성
+                            </h3>
+                            <button id="clear-note-btn" onclick="clearMemoForm()" class="text-xs text-slate-400 hover:text-slate-600">초기화</button>
+                        </div>
+                        <input type="text" id="memo-title" placeholder="제목을 입력하세요..." class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+                        <textarea id="memo-content" rows="6" placeholder="메모 본문 내용을 입력하세요..." class="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 resize-none"></textarea>
+                        
+                        <div class="flex justify-between items-center gap-2">
+                            <span class="text-[10px] text-slate-400">자동 저장 기능을 지원합니다.</span>
+                            <div class="flex gap-2">
+                                <button onclick="saveMemo()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow transition-colors">메모 저장</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Memo List Filter -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-slate-800 text-sm">기록된 메모 목록</h3>
+                            <span id="memo-count-badge" class="bg-brand-100 text-brand-700 text-xs px-2.5 py-0.5 rounded-full font-bold">0개</span>
+                        </div>
+                        <div id="memo-list-container" class="space-y-2.5 max-h-[280px] overflow-y-auto pr-1">
+                            <!-- Injected Memos -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: AI Workspace Text Assist / Analysis -->
+                <div class="lg:col-span-7 flex flex-col gap-4">
+                    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex-grow flex flex-col">
+                        <!-- AI Analysis Header -->
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-slate-100">
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-base flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-brand-500"></span>
+                                    AI 메모 교정 & 핵심 요약
+                                </h3>
+                                <p class="text-xs text-slate-500">작성 중이거나 선택한 메모를 지능적으로 윤문/요약해 줍니다.</p>
+                            </div>
+                            <div class="flex gap-1.5">
+                                <button onclick="aiProcessMemo('summarize')" class="bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition-colors">⚡ AI 핵심 요약</button>
+                                <button onclick="aiProcessMemo('polish')" class="bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition-colors">✨ 글 다듬기</button>
+                            </div>
+                        </div>
+
+                        <!-- Analysis Workspace Output -->
+                        <div class="flex-grow py-4 flex flex-col">
+                            <div id="ai-memo-feedback" class="bg-brand-50/50 border border-brand-100 rounded-xl p-5 flex-grow text-sm text-slate-600 leading-relaxed overflow-y-auto max-h-[350px]">
+                                <div class="h-full flex flex-col items-center justify-center text-center text-slate-400 space-y-2 py-8">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                    </svg>
+                                    <p class="font-semibold text-slate-600">대기 중인 AI 분석 결과가 없습니다.</p>
+                                    <p class="text-xs max-w-xs mx-auto">메모를 작성하시거나 목록에서 선택한 뒤 상단의 [AI 핵심 요약] 또는 [글 다듬기]를 눌러보세요.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Applied Footer Action -->
+                        <div id="apply-ai-btn-container" class="hidden flex justify-end">
+                            <button onclick="applyAITextToMemo()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition-colors">
+                                메모 본문에 적용하기 &darr;
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. CALENDAR TAB -->
+        <section id="tab-calendar" class="tab-content hidden space-y-6">
+            <!-- Google Sync Action Banner -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <!-- Google Calendar Logo mock -->
+                    <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-blue-600 border border-slate-200 font-bold text-lg shadow-sm">
+                        G
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 flex items-center gap-1.5">
+                            구글 캘린더 스마트 연동
+                        </h3>
+                        <p class="text-xs text-slate-500">구글 캘린더 계정과 무선 연동하여 실시간 일정 데이터를 양방향 동기화합니다.</p>
+                    </div>
+                </div>
+                <div>
+                    <button id="google-sync-btn" onclick="toggleGoogleSync()" class="bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-all shadow-md shadow-brand-100 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4.5 w-4.5 animate-spin hidden" id="sync-spinner" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 15h-.582" />
+                        </svg>
+                        <span id="sync-btn-text">Google 캘린더 연동하기</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Natural Language Parser Tool -->
+            <div class="bg-gradient-to-r from-slate-900 to-slate-800 rounded-2xl p-6 text-white shadow-md">
+                <div class="max-w-2xl space-y-3">
+                    <span class="text-brand-400 text-xs font-bold uppercase tracking-wider">AI Scheduler</span>
+                    <h3 class="text-lg font-bold">AI 자연어 분석 일정 추가기</h3>
+                    <p class="text-slate-300 text-xs leading-relaxed">복잡하게 시간 설정하고 기입하지 마세요. "내일 오전 11시 마케팅 보고서 작성", "이번주 금요일 오후 4시 프로젝트 점검 회의" 등을 자유롭게 한글로 적으시면 인공지능이 즉시 정확한 시간 및 일정명으로 해석해 줍니다.</p>
+                    <div class="flex flex-col sm:flex-row gap-2 pt-2">
+                        <input type="text" id="natural-schedule-input" placeholder="스마트 일정 입력을 입력해보세요..." class="flex-grow px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <button onclick="processCalendarSchedule()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-5 py-3 rounded-xl text-sm transition-all flex items-center justify-center gap-1.5 shadow-md shadow-brand-900/30">
+                            AI 일정 해석
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Calendar main panel (7 cols) -->
+                <div class="lg:col-span-8 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+                    <!-- Calendar Header Controls -->
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex items-center gap-1.5">
+                            <span class="p-2 rounded-lg bg-slate-100 text-slate-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </span>
+                            <h2 id="calendar-month-year" class="font-bold text-slate-800 text-lg">2026년 6월</h2>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="prevMonth()" class="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-slate-600 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                            </button>
+                            <button onclick="setToday()" class="px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 transition-colors">오늘</button>
+                            <button onclick="nextMonth()" class="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg text-slate-600 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Calendar Grid -->
+                    <div class="grid grid-cols-7 gap-1 text-center text-xs font-bold text-slate-400 uppercase mb-2 border-b border-slate-100 pb-2">
+                        <div class="text-rose-500">일</div>
+                        <div>월</div>
+                        <div>화</div>
+                        <div>수</div>
+                        <div>목</div>
+                        <div>금</div>
+                        <div class="text-blue-500">토</div>
+                    </div>
+                    <div id="calendar-grid" class="grid grid-cols-7 gap-1 min-h-[350px]">
+                        <!-- Dynamic Month Inject -->
+                    </div>
+                </div>
+
+                <!-- Schedule List panel (4 cols) -->
+                <div class="lg:col-span-4 space-y-4">
+                    <!-- Standard Manual Schedule Form -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                            <span class="w-1.5 h-4 bg-brand-600 rounded"></span>
+                            일정 직접 등록
+                        </h3>
+                        <div class="space-y-2">
+                            <input type="text" id="sched-title" placeholder="일정명을 입력하세요" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="date" id="sched-date" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                <input type="time" id="sched-time" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            </div>
+                        </div>
+                        <button onclick="saveManualSchedule()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2 rounded-lg text-xs transition-colors shadow">등록하기</button>
+                    </div>
+
+                    <!-- Schedule Details Info -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex flex-col h-[300px]">
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5 justify-between mb-3">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-1.5 h-4 bg-yellow-400 rounded"></span>
+                                다가오는 수동/구글 일정
+                            </div>
+                            <span onclick="clearAllSchedules()" class="text-[10px] text-slate-400 hover:text-rose-500 cursor-pointer">전체 삭제</span>
+                        </h3>
+                        <div id="upcoming-schedule-list" class="space-y-2 overflow-y-auto flex-grow pr-1">
+                            <!-- JS Inject -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FLOATING BANNER OR TOAST MESSAGE SYSTEM -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-950 text-white px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-2.5 translate-y-20 opacity-0 transition-all duration-300 pointer-events-none text-sm font-semibold">
+        <span class="p-1 rounded-full bg-brand-500 text-white" id="toast-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+            </svg>
+        </span>
+        <span id="toast-message">알림 메시지입니다.</span>
+    </div>
+
+    <!-- GOOGLE LOGIN INTERACTIVE MODAL -->
+    <div id="google-auth-modal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+            <div class="text-center">
+                <!-- Google Visual Mark -->
+                <div class="w-12 h-12 bg-slate-100 border border-slate-200 text-xl font-bold flex items-center justify-center mx-auto rounded-xl text-blue-600 shadow-sm mb-3">G</div>
+                <h3 class="text-lg font-bold text-slate-800">구글 캘린더 계정 연동</h3>
+                <p class="text-xs text-slate-500 mt-1">AI Smart Workspace가 귀하의 구글 캘린더 일정을 스캔하고 동기화할 수 있도록 권한을 허용합니다.</p>
+            </div>
+            
+            <div class="bg-slate-50 border border-slate-100 p-3 rounded-xl space-y-2">
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    일정 가져오기 및 동기화 권한
+                </div>
+                <div class="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    스마트 비서 일정 자동 분석 추가 권한
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="closeGoogleModal()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition-colors">취소</button>
+                <button onclick="acceptGoogleSync()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl text-xs transition-colors shadow">허용 및 연동</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <span class="text-xs text-slate-400">&copy; 2026 AI Smart Workspace. All rights reserved.</span>
+            <div class="flex gap-4">
+                <span class="text-xs text-brand-600 font-semibold cursor-pointer hover:underline">개인정보처리방침</span>
+                <span class="text-xs text-slate-400 font-semibold">|</span>
+                <span class="text-xs text-brand-600 font-semibold cursor-pointer hover:underline">사용자 가이드</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- INTERACTION SCRIPTS -->
+    <script>
+        // --- GLOBAL STATE ---
+        let currentTab = 'dashboard';
+        let isSyncedGoogle = false;
+        
+        // Memos structure
+        let memos = JSON.parse(localStorage.getItem('workspace_memos')) || [
+            { id: 1, title: '🚀 워크스페이스 시작하기', content: '반갑습니다! 이 AI 스마트 워크스페이스는 한 페이지에서 계산, 메모, 구글 캘린더 연동 일정을 모두 처리할 수 있는 만능 보드입니다. AI 요약 기능과 수식 설명 기능, 자연어 처리 일정 분석 기능을 적극적으로 사용해 보세요!', date: '2026-06-02 14:30' },
+            { id: 2, title: '📌 프로젝트 마일스톤', content: '다음 마일스톤 발표일은 다가오는 금요일입니다. 핵심 지표와 프레젠테이션 디자인 확인이 필수적입니다.', date: '2026-06-02 15:00' }
+        ];
+
+        // Memos AI temporary result holder
+        let lastAIResultText = "";
+
+        // Calendar variables
+        let currentDate = new Date(2026, 5, 2); // 2026년 6월 (0: 1월, 5: 6월)
+        let events = JSON.parse(localStorage.getItem('workspace_events')) || [
+            { id: 'ev1', title: '🖥️ 주간 부서 회의', date: '2026-06-08', time: '10:00', source: 'local' },
+            { id: 'ev2', title: '☕ 파트너십 오찬 미팅', date: '2026-06-12', time: '12:30', source: 'local' },
+            { id: 'ev3', title: '🎨 기획전 시안 디자인 마감', date: '2026-06-19', time: '18:00', source: 'local' }
+        ];
+
+        // Selected memo to edit
+        let selectedMemoId = null;
+
+        // --- INIT WORKSPACE ON LOAD ---
+        window.onload = function() {
+            renderMemos();
+            renderCalendar();
+            renderUpcomingSchedules();
+            updateDashboardMemos();
+            checkGoogleSyncUI();
+        };
+
+        // --- TAB NAVIGATION SYSTEM ---
+        function switchTab(tabId) {
+            currentTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            // Button highlights
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-brand-600', 'bg-brand-50');
+                btn.classList.add('text-slate-600', 'hover:text-brand-600', 'hover:bg-slate-50');
+            });
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-600', 'hover:text-brand-600', 'hover:bg-slate-50');
+                activeBtn.classList.add('text-brand-600', 'bg-brand-50');
+            }
+
+            // Tabs special render on active
+            if (tabId === 'calendar') {
+                renderCalendar();
+                renderUpcomingSchedules();
+            } else if (tabId === 'notepad') {
+                renderMemos();
+            } else if (tabId === 'dashboard') {
+                updateDashboardMemos();
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // --- TOAST NOTIFICATIONS ---
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+            
+            toastMsg.innerText = message;
+            
+            if (type === 'success') {
+                toastIcon.className = "p-1 rounded-full bg-brand-600 text-white";
+                toastIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>`;
+            } else {
+                toastIcon.className = "p-1 rounded-full bg-rose-500 text-white";
+                toastIcon.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>`;
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // --- MEMO LOGIC (CRUD) ---
+        function renderMemos() {
+            const container = document.getElementById('memo-list-container');
+            const badge = document.getElementById('memo-count-badge');
+            badge.innerText = `${memos.length}개`;
+
+            if (memos.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">등록된 메모가 없습니다.</p>`;
+                return;
+            }
+
+            container.innerHTML = memos.map(memo => `
+                <div onclick="selectMemo(${memo.id})" class="p-3.5 bg-slate-50 hover:bg-brand-50 border border-slate-200 hover:border-brand-300 rounded-xl cursor-pointer transition-all ${selectedMemoId === memo.id ? 'border-brand-400 bg-brand-50/75' : ''}">
+                    <div class="flex justify-between items-start gap-2">
+                        <h4 class="font-bold text-xs text-slate-800 truncate">${escapeHtml(memo.title || '무제 메모')}</h4>
+                        <button onclick="deleteMemo(event, ${memo.id})" class="text-slate-400 hover:text-rose-500 p-0.5 rounded transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">${escapeHtml(memo.content)}</p>
+                    <span class="text-[9px] text-slate-400 block mt-2">${memo.date}</span>
+                </div>
+            `).join('');
+        }
+
+        function selectMemo(id) {
+            const memo = memos.find(m => m.id === id);
+            if (!memo) return;
+            
+            selectedMemoId = id;
+            document.getElementById('memo-title').value = memo.title;
+            document.getElementById('memo-content').value = memo.content;
+            document.getElementById('clear-note-btn').innerText = "새 메모";
+            
+            renderMemos();
+        }
+
+        function saveMemo() {
+            const titleInput = document.getElementById('memo-title');
+            const contentInput = document.getElementById('memo-content');
+            
+            if (!contentInput.value.trim()) {
+                showToast('메모 본문 내용을 입력해 주세요.', 'error');
+                return;
+            }
+
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            if (selectedMemoId !== null) {
+                // Edit mode
+                const memoIndex = memos.findIndex(m => m.id === selectedMemoId);
+                if (memoIndex !== -1) {
+                    memos[memoIndex].title = titleInput.value.trim() || '무제 메모';
+                    memos[memoIndex].content = contentInput.value;
+                    memos[memoIndex].date = dateStr;
+                    showToast('메모가 정상 수정되었습니다.');
+                }
+            } else {
+                // Add mode
+                const newMemo = {
+                    id: Date.now(),
+                    title: titleInput.value.trim() || '무제 메모',
+                    content: contentInput.value,
+                    date: dateStr
+                };
+                memos.unshift(newMemo);
+                showToast('새로운 메모가 등록되었습니다.');
+            }
+
+            localStorage.setItem('workspace_memos', JSON.stringify(memos));
+            clearMemoForm();
+            renderMemos();
+            updateDashboardMemos();
+        }
+
+        function deleteMemo(event, id) {
+            event.stopPropagation(); // Prevents triggers selection
+            memos = memos.filter(m => m.id !== id);
+            localStorage.setItem('workspace_memos', JSON.stringify(memos));
+            
+            if (selectedMemoId === id) {
+                clearMemoForm();
+            }
+            
+            showToast('메모가 성공적으로 삭제되었습니다.');
+            renderMemos();
+            updateDashboardMemos();
+        }
+
+        function clearMemoForm() {
+            selectedMemoId = null;
+            document.getElementById('memo-title').value = '';
+            document.getElementById('memo-content').value = '';
+            document.getElementById('clear-note-btn').innerText = "초기화";
+            renderMemos();
+        }
+
+        // --- DASHBOARD DISPLAY UPDATE ---
+        function updateDashboardMemos() {
+            const list = document.getElementById('quick-memo-list');
+            if (memos.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">등록된 메모가 없습니다.</p>`;
+                return;
+            }
+
+            list.innerHTML = memos.slice(0, 3).map(memo => `
+                <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                    <h4 class="font-bold text-xs text-slate-800 truncate">${escapeHtml(memo.title)}</h4>
+                    <p class="text-[11px] text-slate-500 line-clamp-1 leading-relaxed">${escapeHtml(memo.content)}</p>
+                </div>
+            `).join('');
+        }
+
+        // --- CALENDAR SYSTEM (GRID & EVENTS) ---
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            const monthYearTitle = document.getElementById('calendar-month-year');
+            
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth(); // 0-based
+            
+            monthYearTitle.innerText = `${year}년 ${month + 1}월`;
+
+            // Clear previous grid
+            grid.innerHTML = '';
+
+            // First day and last day calculation
+            const firstDayIndex = new Date(year, month, 1).getDay();
+            const lastDate = new Date(year, month + 1, 0).getDate();
+            const prevLastDate = new Date(year, month, 0).getDate();
+
+            // Render Previous Month's Days (padding)
+            for (let i = firstDayIndex; i > 0; i--) {
+                const dayNum = prevLastDate - i + 1;
+                grid.innerHTML += `
+                    <div class="bg-slate-50/50 text-slate-300 p-2 border border-slate-100 rounded-lg min-h-[60px] text-left select-none text-xs">
+                        ${dayNum}
+                    </div>
+                `;
+            }
+
+            // Render Current Month's Days
+            for (let day = 1; day <= lastDate; day++) {
+                const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const isToday = (day === 2 && month === 5 && year === 2026); // Match 2026-06-02
+                
+                // Get events for this specific date
+                const dayEvents = events.filter(e => e.date === dateString);
+
+                let eventMarkup = '';
+                if (dayEvents.length > 0) {
+                    eventMarkup = dayEvents.map(e => {
+                        const bgClass = e.source === 'google' ? 'bg-indigo-100 border-indigo-200 text-indigo-700' : 'bg-brand-100 border-brand-200 text-brand-700';
+                        return `<div class="text-[9px] px-1.5 py-0.5 rounded border ${bgClass} truncate mt-1 font-semibold" title="${escapeHtml(e.title)}">${escapeHtml(e.title)}</div>`;
+                    }).join('');
+                }
+
+                grid.innerHTML += `
+                    <div class="bg-white p-2 border border-slate-100 rounded-lg min-h-[60px] text-left relative flex flex-col justify-between hover:bg-brand-50/30 transition-colors">
+                        <span class="text-xs font-semibold ${isToday ? 'bg-brand-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-[11px] shadow-sm' : 'text-slate-700'}">
+                            ${day}
+                        </span>
+                        <div class="flex-grow overflow-hidden mt-1">
+                            ${eventMarkup}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function prevMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function setToday() {
+            currentDate = new Date(2026, 5, 2); // Reset to system defined mock time
+            renderCalendar();
+        }
+
+        // Add Manual Schedule
+        function saveManualSchedule() {
+            const titleInput = document.getElementById('sched-title');
+            const dateInput = document.getElementById('sched-date');
+            const timeInput = document.getElementById('sched-time');
+
+            if (!titleInput.value.trim() || !dateInput.value) {
+                showToast('일정 이름과 일자를 입력해 주세요.', 'error');
+                return;
+            }
+
+            const newEvent = {
+                id: 'ev_' + Date.now(),
+                title: titleInput.value.trim(),
+                date: dateInput.value,
+                time: timeInput.value || '00:00',
+                source: 'local'
+            };
+
+            events.push(newEvent);
+            localStorage.setItem('workspace_events', JSON.stringify(events));
+            showToast('새 일정이 정상 등록되었습니다.');
+            
+            // Clean
+            titleInput.value = '';
+            dateInput.value = '';
+            timeInput.value = '';
+
+            renderCalendar();
+            renderUpcomingSchedules();
+        }
+
+        // Render Sidebar upcoming lists
+        function renderUpcomingSchedules() {
+            const container = document.getElementById('upcoming-schedule-list');
+            if (events.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-10">예정된 일정이 없습니다.</p>`;
+                return;
+            }
+
+            // Sort by date ascending
+            const sorted = [...events].sort((a, b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`));
+
+            container.innerHTML = sorted.map(ev => {
+                const isGoogle = ev.source === 'google';
+                return `
+                    <div class="p-2.5 rounded-xl border border-slate-100 flex items-center justify-between gap-2 shadow-sm ${isGoogle ? 'bg-indigo-50/50 border-indigo-100' : 'bg-slate-50'}">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-xs text-slate-800 truncate">${escapeHtml(ev.title)}</h4>
+                            <div class="flex items-center gap-1 text-[10px] text-slate-400 mt-1">
+                                <span>📅 ${ev.date} (${ev.time})</span>
+                                ${isGoogle ? '<span class="text-[9px] bg-indigo-100 text-indigo-700 px-1 py-0.1 rounded font-bold">Google</span>' : ''}
+                            </div>
+                        </div>
+                        <button onclick="deleteSchedule('${ev.id}')" class="text-slate-400 hover:text-rose-500 p-1 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function deleteSchedule(id) {
+            events = events.filter(e => e.id !== id);
+            localStorage.setItem('workspace_events', JSON.stringify(events));
+            showToast('일정이 삭제되었습니다.');
+            renderCalendar();
+            renderUpcomingSchedules();
+        }
+
+        function clearAllSchedules() {
+            events = [];
+            localStorage.setItem('workspace_events', JSON.stringify(events));
+            showToast('모든 일정이 초기화되었습니다.');
+            renderCalendar();
+            renderUpcomingSchedules();
+        }
+
+        // --- GOOGLE CALENDAR SYNC MOCKUP ---
+        function checkGoogleSyncUI() {
+            const btnText = document.getElementById('sync-btn-text');
+            const topBadge = document.getElementById('google-sync-status');
+            
+            if (isSyncedGoogle) {
+                btnText.innerText = "구글 연동 해제";
+                topBadge.innerText = "🟢 Google Calendar 연동됨";
+                topBadge.parentElement.className = "bg-emerald-500/15 backdrop-blur-md border border-emerald-400/20 p-4 rounded-xl flex items-center gap-3";
+            } else {
+                btnText.innerText = "Google 캘린더 연동하기";
+                topBadge.innerText = "Google Calendar 연동 대기중";
+                topBadge.parentElement.className = "bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl flex items-center gap-3";
+            }
+        }
+
+        function toggleGoogleSync() {
+            if (isSyncedGoogle) {
+                // Perform Disconnect
+                isSyncedGoogle = false;
+                // Filter out Google mock events
+                events = events.filter(e => e.source !== 'google');
+                localStorage.setItem('workspace_events', JSON.stringify(events));
+                
+                showToast('Google Calendar 연동이 안전하게 해제되었습니다.');
+                checkGoogleSyncUI();
+                renderCalendar();
+                renderUpcomingSchedules();
+            } else {
+                // Show Interactive Modal
+                document.getElementById('google-auth-modal').classList.remove('hidden');
+                document.getElementById('google-auth-modal').classList.add('flex');
+            }
+        }
+
+        function closeGoogleModal() {
+            document.getElementById('google-auth-modal').classList.add('hidden');
+            document.getElementById('google-auth-modal').classList.remove('flex');
+        }
+
+        function acceptGoogleSync() {
+            closeGoogleModal();
+            const spinner = document.getElementById('sync-spinner');
+            spinner.classList.remove('hidden');
+            
+            // Artificial delay for professional feel
+            setTimeout(() => {
+                spinner.classList.add('hidden');
+                isSyncedGoogle = true;
+                
+                // Add mock Google calendar data
+                const googleEvents = [
+                    { id: 'g_ev1', title: '💼 [구글] 마케팅 기획 회의', date: '2026-06-04', time: '14:00', source: 'google' },
+                    { id: 'g_ev2', title: '🏥 [구글] 정기 건강검진', date: '2026-06-11', time: '09:30', source: 'google' },
+                    { id: 'g_ev3', title: '✈️ [구글] 제주 지사 워크숍', date: '2026-06-25', time: '09:00', source: 'google' }
+                ];
+                
+                // Prevent duplicate inserts
+                events = events.filter(e => e.source !== 'google');
+                events = [...events, ...googleEvents];
+                localStorage.setItem('workspace_events', JSON.stringify(events));
+
+                showToast('구글 캘린더 연동 및 실시간 데이터 주입이 성공했습니다!');
+                checkGoogleSyncUI();
+                renderCalendar();
+                renderUpcomingSchedules();
+            }, 1200);
+        }
+
+        // --- CALCULATOR CORE LOGIC ---
+        let currentCalcExp = '';
+        
+        function calcPress(val) {
+            currentCalcExp += val;
+            document.getElementById('calc-display').innerText = currentCalcExp;
+        }
+
+        function calcClear() {
+            currentCalcExp = '';
+            document.getElementById('calc-display').innerText = '0';
+            document.getElementById('calc-exp').innerText = '';
+        }
+
+        function calcBack() {
+            currentCalcExp = currentCalcExp.slice(0, -1);
+            document.getElementById('calc-display').innerText = currentCalcExp || '0';
+        }
+
+        function calcCalculate() {
+            if (!currentCalcExp) return;
+            try {
+                // Sanitize input formula (allow only numbers and basic math signs for safety)
+                const sanitized = currentCalcExp.replace(/[^0-9+\-*/.]/g, '');
+                // Evaluate formula
+                const result = Function(`"use strict"; return (${sanitized})`)();
+                
+                document.getElementById('calc-exp').innerText = currentCalcExp + ' =';
+                document.getElementById('calc-display').innerText = result;
+                currentCalcExp = String(result);
+            } catch (error) {
+                document.getElementById('calc-display').innerText = 'Error';
+                currentCalcExp = '';
+            }
+        }
+
+        function injectPresetFormula(formula) {
+            currentCalcExp = formula;
+            document.getElementById('calc-display').innerText = formula;
+            document.getElementById('calc-exp').innerText = '추천 수식 로드';
+            showToast('추천 수식이 계산기에 설정되었습니다.');
+        }
+
+        // --- CALCULATOR AI EXPLAINER MOCK ---
+        function analyzeFormula() {
+            const currentVal = document.getElementById('calc-display').innerText;
+            const exp = document.getElementById('calc-exp').innerText || currentVal;
+            const targetEl = document.getElementById('ai-calc-explanation');
+
+            if (!currentVal || currentVal === '0' || currentVal === 'Error') {
+                showToast('분석할 정확한 수식이 계산기에 준비되어 있지 않습니다.', 'error');
+                return;
+            }
+
+            // Spinner Loading
+            targetEl.innerHTML = `
+                <div class="text-center py-8 space-y-3">
+                    <svg class="animate-spin h-8 w-8 text-brand-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="text-xs text-slate-500 font-bold">인공지능 수식 설명 모델 연산 중...</p>
+                </div>
+            `;
+
+            // Professional Response Logic Generation
+            setTimeout(() => {
+                let explanation = '';
+                if (exp.includes('*') || exp.includes('×')) {
+                    explanation = `
+                        <div class="space-y-3 text-left">
+                            <div class="inline-flex px-2 py-0.5 bg-brand-100 text-brand-800 text-[10px] rounded font-bold">AI 연산 리포트</div>
+                            <h4 class="font-bold text-slate-800 text-sm">해당 수식은 [곱셈 기반 증가량/스케일 분석] 입니다.</h4>
+                            <p class="text-xs text-slate-600">입력된 수식 <code class="bg-slate-100 px-1 py-0.5 rounded text-brand-700 font-mono font-bold">${exp}</code>은 특정 기초단위에 배율을 가해 누적 결과 또는 총비용을 도출하는 전형적인 배수 분석식입니다.</p>
+                            <div class="bg-white border border-slate-200 p-3 rounded-lg text-xs space-y-1">
+                                <span class="font-bold text-slate-700 block">&bull; 활용 사례</span>
+                                <span class="text-slate-500">- 물품 단가 x 대량 구매 수량 책정 시 총 부가금액 산출</span>
+                                <span class="text-slate-500">- 고정 퍼센트율 복리 단리 재무 분석 및 자금 흐름 마진 계산</span>
+                            </div>
+                        </div>
+                    `;
+                } else if (exp.includes('/') || exp.includes('÷')) {
+                    explanation = `
+                        <div class="space-y-3 text-left">
+                            <div class="inline-flex px-2 py-0.5 bg-brand-100 text-brand-800 text-[10px] rounded font-bold">AI 연산 리포트</div>
+                            <h4 class="font-bold text-slate-800 text-sm">해당 수식은 [균등 배분 및 정량화 비율 분석] 입니다.</h4>
+                            <p class="text-xs text-slate-600">입력된 수식 <code class="bg-slate-100 px-1 py-0.5 rounded text-brand-700 font-mono font-bold">${exp}</code>은 전체 용량을 균등분할하여 개당 지분율이나 유효 평균 가치를 나누는 하향식 분배 메커니즘입니다.</p>
+                            <div class="bg-white border border-slate-200 p-3 rounded-lg text-xs space-y-1">
+                                <span class="font-bold text-slate-700 block">&bull; 활용 사례</span>
+                                <span class="text-slate-500">- 인당 더치페이 수수료 배분 및 단위 프로젝트 생산성 산출</span>
+                                <span class="text-slate-500">- 분기별 가용 리소스 배분 계획 및 단위 투자 수익률 분석</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    explanation = `
+                        <div class="space-y-3 text-left">
+                            <div class="inline-flex px-2 py-0.5 bg-brand-100 text-brand-800 text-[10px] rounded font-bold">AI 연산 리포트</div>
+                            <h4 class="font-bold text-slate-800 text-sm">해당 수식은 [합산 또는 누적 기초 연산] 입니다.</h4>
+                            <p class="text-xs text-slate-600">입력된 수식 <code class="bg-slate-100 px-1 py-0.5 rounded text-brand-700 font-mono font-bold">${exp}</code>은 여러 요소의 부분합을 더하거나 빼어 유기적이고 일원화된 종합 실효액을 판단하는 기본적인 산술식입니다.</p>
+                            <div class="bg-white border border-slate-200 p-3 rounded-lg text-xs space-y-1">
+                                <span class="font-bold text-slate-700 block">&bull; 활용 사례</span>
+                                <span class="text-slate-500">- 단순 지출 합산 및 월간 소비 잔액 마이너스 피드백 추적</span>
+                                <span class="text-slate-500">- 총 작업 공정 시 수반되는 단계별 고정 예상 시간 산술</span>
+                            </div>
+                        </div>
+                    `;
+                }
+                targetEl.innerHTML = explanation;
+                showToast('AI 분석이 완료되었습니다!');
+            }, 800);
+        }
+
+        // --- NOTEPAD AI WRITING ASSIST ---
+        function aiProcessMemo(actionType) {
+            const content = document.getElementById('memo-content').value.trim();
+            const feedbackBox = document.getElementById('ai-memo-feedback');
+            const applyBtn = document.getElementById('apply-ai-btn-container');
+
+            if (!content) {
+                showToast('AI가 처리할 원본 본문 내용이 존재하지 않습니다.', 'error');
+                return;
+            }
+
+            feedbackBox.innerHTML = `
+                <div class="h-full flex flex-col items-center justify-center text-center text-slate-500 space-y-3 py-12">
+                    <svg class="animate-spin h-8 w-8 text-brand-600 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p class="text-xs font-bold text-slate-700">AI 자연어 생성 모델 처리 중...</p>
+                </div>
+            `;
+            applyBtn.classList.add('hidden');
+
+            setTimeout(() => {
+                let formattedText = "";
+                if (actionType === 'summarize') {
+                    formattedText = `
+                        <div class="space-y-3 text-left">
+                            <span class="inline-flex px-2.5 py-0.5 bg-brand-100 text-brand-800 text-[10px] rounded-full font-bold">AI 요약 결과</span>
+                            <div class="bg-white border border-brand-100 p-4 rounded-xl space-y-2">
+                                <p class="font-bold text-slate-800 text-sm">💡 메모 핵심 요지</p>
+                                <ul class="list-disc list-inside text-xs text-slate-600 space-y-1">
+                                    <li>작성된 텍스트에서 주요 핵심 성과 목표와 연관 지점 식별.</li>
+                                    <li>본문 내 중요 리소스 배정에 관한 실질적 대응 방안을 간소화함.</li>
+                                    <li>다음 행동 규칙(Action Item): 핵심 세부 조치 일정 파악 및 협력망 조율 필요.</li>
+                                </ul>
+                            </div>
+                            <p class="text-[11px] text-slate-400">요약된 결과를 복사하여 아래 적용하기 버튼으로 본문을 변경할 수 있습니다.</p>
+                        </div>
+                    `;
+                    lastAIResultText = `[AI 핵심 요약 리포트]\n\n💡 메모 핵심 요지:\n1. 작성된 텍스트에서 주요 핵심 성과 목표와 연관 지점 식별.\n2. 본문 내 중요 리소스 배정에 관한 실질적 대응 방안을 간소화함.\n3. 다음 행동 규칙(Action Item): 핵심 세부 조치 일정 파악 및 협력망 조율 필요.\n\n--- 원본 참조: ${content.substring(0, 50)}...`;
+                } else if (actionType === 'polish') {
+                    formattedText = `
+                        <div class="space-y-3 text-left">
+                            <span class="inline-flex px-2.5 py-0.5 bg-brand-100 text-brand-800 text-[10px] rounded-full font-bold">AI 비즈니스 톤 윤문 결과</span>
+                            <div class="bg-white border border-brand-100 p-4 rounded-xl text-xs text-slate-700 space-y-2 leading-relaxed">
+                                <p class="font-semibold text-slate-400 border-b pb-1 text-[10px]">수정 제안 텍스트</p>
+                                ${content.replace(/\n/g, '<br>')}
+                                <br><br>
+                                <span class="text-brand-600 font-semibold">[교정 사항 요약]</span> 비즈니스 파트너 및 대내외 공유용으로 적합하도록 명확하고 권위 있는 문체(종결어미 수정 및 중복 단어 통폐합)로 격식 있게 최적화하였습니다.
+                            </div>
+                        </div>
+                    `;
+                    lastAIResultText = `${content}\n\n[AI 윤문 가이드라인 반영: 격식 있고 정돈된 구조로 내용이 보강되었습니다.]`;
+                }
+
+                feedbackBox.innerHTML = formattedText;
+                applyBtn.classList.remove('hidden');
+                showToast('AI 텍스트 최적화 처리가 완수되었습니다.');
+            }, 1000);
+        }
+
+        function applyAITextToMemo() {
+            if (!lastAIResultText) return;
+            document.getElementById('memo-content').value = lastAIResultText;
+            showToast('AI가 변환한 텍스트가 메모 작성란에 적용되었습니다.');
+        }
+
+        // --- NATURAL LANGUAGE PROCESSOR (FOR EVENTS) ---
+        // Simple NLP mock parser to handle Korean text inputs
+        function parseKoreanScheduleText(inputText) {
+            const now = new Date(2026, 5, 2); // Base Mock date: 2026년 6월 2일 (화요일)
+            let year = 2026;
+            let month = 6;
+            let day = 2;
+            let hour = "10";
+            let min = "00";
+            let title = "새로운 AI 일정";
+
+            const normalized = inputText.trim();
+
+            // Date parsing
+            if (normalized.includes('오늘')) {
+                day = 2;
+            } else if (normalized.includes('내일')) {
+                day = 3;
+            } else if (normalized.includes('모레')) {
+                day = 4;
+            } else if (normalized.includes('월요일') || normalized.includes('월욜')) {
+                day = 8; // Next Mon
+            } else if (normalized.includes('화요일') || normalized.includes('화욜')) {
+                day = 9; // Next Tue
+            } else if (normalized.includes('수요일') || normalized.includes('수욜')) {
+                day = 3; // Closest Wed
+            } else if (normalized.includes('목요일') || normalized.includes('목욜')) {
+                day = 4; // Closest Thu
+            } else if (normalized.includes('금요일') || normalized.includes('금욜')) {
+                day = 5; // Closest Fri
+            } else if (normalized.includes('토요일') || normalized.includes('토욜')) {
+                day = 6;
+            } else if (normalized.includes('일요일') || normalized.includes('일욜')) {
+                day = 7;
+            }
+
+            // Time parsing
+            if (normalized.includes('오전')) {
+                const match = normalized.match(/오전\s*(\d+)시?/);
+                if (match) {
+                    hour = String(match[1]).padStart(2, '0');
+                }
+            } else if (normalized.includes('오후')) {
+                const match = normalized.match(/오후\s*(\d+)시?/);
+                if (match) {
+                    const parsedHour = parseInt(match[1]);
+                    hour = String(parsedHour === 12 ? 12 : parsedHour + 12).padStart(2, '0');
+                }
+            } else {
+                const match = normalized.match(/(\d+)시/);
+                if (match) {
+                    hour = String(match[1]).padStart(2, '0');
+                }
+            }
+
+            // Minute parsing
+            const minMatch = normalized.match(/(\d+)분/);
+            if (minMatch) {
+                min = String(minMatch[1]).padStart(2, '0');
+            }
+
+            // Title cleaning
+            // Strip relative time words to extract the true title
+            let cleanedTitle = normalized
+                .replace(/(오늘|내일|모레|월요일|화요일|수요일|목요일|금요일|토요일|일요일|이번주|다음주)/g, '')
+                .replace(/(오전|오후)/g, '')
+                .replace(/\d+시/g, '')
+                .replace(/\d+분/g, '')
+                .replace(/(일정 추가|등록해줘|일정 추가해줘|추가)/g, '')
+                .trim();
+
+            if (cleanedTitle.length > 0) {
+                title = cleanedTitle;
+            }
+
+            const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const formattedTime = `${hour}:${min}`;
+
+            return { title, date: formattedDate, time: formattedTime };
+        }
+
+        function processCalendarSchedule() {
+            const inputVal = document.getElementById('natural-schedule-input').value.trim();
+            if (!inputVal) {
+                showToast('분석할 한글 자연어 일정을 입력하세요.', 'error');
+                return;
+            }
+
+            const result = parseKoreanScheduleText(inputVal);
+            
+            // Add to events
+            const newEvent = {
+                id: 'ev_nlp_' + Date.now(),
+                title: '✨ ' + result.title,
+                date: result.date,
+                time: result.time,
+                source: 'local'
+            };
+
+            events.push(newEvent);
+            localStorage.setItem('workspace_events', JSON.stringify(events));
+            
+            showToast(`[AI 성공] "${result.title}" 일정을 ${result.date} ${result.time}에 성공적으로 안착시켰습니다!`);
+            document.getElementById('natural-schedule-input').value = '';
+            
+            renderCalendar();
+            renderUpcomingSchedules();
+        }
+
+        // Dashboard quick sidebar register
+        function processQuickSchedule() {
+            const inputVal = document.getElementById('natural-input-quick').value.trim();
+            if (!inputVal) {
+                showToast('일정 문장을 적어주세요.', 'error');
+                return;
+            }
+
+            const result = parseKoreanScheduleText(inputVal);
+            const newEvent = {
+                id: 'ev_nlp_' + Date.now(),
+                title: '✨ ' + result.title,
+                date: result.date,
+                time: result.time,
+                source: 'local'
+            };
+
+            events.push(newEvent);
+            localStorage.setItem('workspace_events', JSON.stringify(events));
+            
+            showToast(`"${result.title}" 일정이 추가되었습니다.`);
+            document.getElementById('natural-input-quick').value = '';
+            
+            // Re-render internally if visible
+            renderCalendar();
+            renderUpcomingSchedules();
+        }
+
+        // --- AI ASSISTANT CHATBOT INTERACTIVE ---
+        function handleChatSubmit(event) {
+            event.preventDefault();
+            const inputEl = document.getElementById('chat-input');
+            const query = inputEl.value.trim();
+            if (!query) return;
+
+            // Render User Bubble
+            appendChatMessage(query, 'user');
+            inputEl.value = '';
+
+            // AI Logic response loader
+            setTimeout(() => {
+                let aiResponse = "";
+                const normalized = query.toLowerCase();
+
+                if (normalized.includes('안녕') || normalized.includes('헬로') || normalized.includes('hi')) {
+                    aiResponse = "안녕하세요! 당신의 유능하고 스마트한 인공지능 개인 비서입니다. 계산기 활용법, 구글 캘린더 연동 혹은 메모장 윤문에 관해 물어보세요!";
+                } else if (normalized.includes('계산기') || normalized.includes('더하기') || normalized.includes('수식')) {
+                    aiResponse = "상단 탭 중 <b>[AI 계산기]</b>를 선택하시면 일반 수식 입력이 가능하며, AI가 수식의 숨겨진 의미와 비즈니스/수학적 응용 사례까지 깔끔하게 파헤쳐 드립니다. 수식을 입력하신 뒤 'AI 해설 요청'을 해보세요.";
+                } else if (normalized.includes('메모') || normalized.includes('노트')) {
+                    aiResponse = "<b>[AI 메모장]</b> 기능을 제공하고 있습니다. 마크다운 형식처럼 수월하게 메모를 기록하고, 저장하면 영구적으로 로컬 스토리지에 보관됩니다. 아울러 AI가 전문적인 비즈니스용 문체로 한눈에 요약하는 스마트 교정 서비스도 준비되어 있습니다.";
+                } else if (normalized.includes('일정') || normalized.includes('달력') || normalized.includes('캘린더')) {
+                    aiResponse = "<b>[일정 관리]</b> 메뉴에서 달력과 리스트를 실시간 추적할 수 있습니다. 상단의 <i>'Google 캘린더 연동하기'</i> 버튼을 클릭하여 연동 상태를 활성화하면 가상 동기화를 거쳐 구글 일정들이 주입됩니다. 자연어로 빠르게 스캔해 추가하는 AI 연산기도 매우 유용합니다.";
+                } else if (normalized.includes('추가') && (normalized.includes('시') || normalized.includes('요일') || normalized.includes('내일'))) {
+                    // Chatbot natural schedule registration triggered directly inside chat!
+                    const result = parseKoreanScheduleText(query);
+                    const newEvent = {
+                        id: 'ev_chat_' + Date.now(),
+                        title: '🤖 ' + result.title,
+                        date: result.date,
+                        time: result.time,
+                        source: 'local'
+                    };
+                    events.push(newEvent);
+                    localStorage.setItem('workspace_events', JSON.stringify(events));
+                    
+                    aiResponse = `지시하신 요청을 분석하여 <b>[${result.title}]</b> 일정을 감지했습니다! 등록 시간: <b>${result.date} ${result.time}</b>. 현재 일정 캘린더에 성공적으로 기록했습니다.`;
+                    showToast('챗봇을 통해 새 일정이 등록되었습니다.');
+                    renderCalendar();
+                    renderUpcomingSchedules();
+                } else {
+                    aiResponse = `질문하신 "${escapeHtml(query)}" 건에 대해 유용하게 파악했습니다. 저는 현재 로컬 환경에서 구동 중인 AI 워크스페이스 도우미이므로, 이 앱 내 계산기 설명서, 메모 요약, 스마트 일정 자동 동기화 가이드 등에 최적의 솔루션을 제공할 수 있습니다. 추가로 무엇을 도와드릴까요?`;
+                }
+
+                appendChatMessage(aiResponse, 'ai');
+            }, 600);
+        }
+
+        function appendChatMessage(text, sender) {
+            const chatBox = document.getElementById('chat-messages');
+            const isUser = sender === 'user';
+            
+            const messageHtml = isUser ? `
+                <div class="flex gap-3 justify-end max-w-[85%] ml-auto">
+                    <div class="bg-brand-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-none text-sm leading-relaxed shadow-sm">
+                        ${escapeHtml(text)}
+                    </div>
+                </div>
+            ` : `
+                <div class="flex gap-3 max-w-[85%]">
+                    <div class="w-8 h-8 rounded-lg bg-brand-100 flex-shrink-0 flex items-center justify-center text-brand-600 font-bold text-xs">AI</div>
+                    <div class="bg-slate-100 text-slate-700 px-4 py-2.5 rounded-2xl rounded-tl-none text-sm leading-relaxed shadow-sm">
+                        ${text}
+                    </div>
+                </div>
+            `;
+            
+            chatBox.innerHTML += messageHtml;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // --- UTILITY HELPER ---
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>

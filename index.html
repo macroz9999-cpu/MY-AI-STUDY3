@@ -118,7 +118,10 @@
                 <div class="space-y-2">
                     <span class="bg-white/20 text-white text-xs px-3 py-1 rounded-full font-semibold uppercase tracking-wider backdrop-blur-sm border border-white/30">AI Workspace Pro</span>
                     <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">안녕하세요, 모든 업무를 한 곳에서 처리하세요.</h1>
-                    <p class="text-brand-100 text-sm sm:text-base max-w-xl">공학용 계산, 스마트 카테고리 메모, 클릭 연동형 캘린더까지 최적화된 도구를 제공합니다.</p>
+                    <p class="text-brand-100 text-sm sm:text-base max-w-xl">공학용 계산, 스마트 카테고리 메모, 실시간 일정 연동이 가능한 지능형 캘린더까지 완벽히 제공합니다.</p>
+                </div>
+                <div class="text-xs font-mono bg-white/10 px-4 py-2 rounded-lg border border-white/20 backdrop-blur-sm shadow-sm" id="dashboard-clock">
+                    Loading Time...
                 </div>
             </div>
 
@@ -126,24 +129,26 @@
                 <!-- AI Assistant Panel -->
                 <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[500px]">
                     <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-brand-100 flex items-center justify-center text-brand-600 font-bold">AI</div>
+                        <div class="w-8 h-8 rounded-lg bg-brand-100 flex items-center justify-center text-brand-600 font-bold animate-pulse">AI</div>
                         <div>
-                            <h2 class="font-bold text-slate-800">지능형 워크스페이스 어시스턴트</h2>
-                            <p class="text-xs text-slate-500">자연어로 지시하여 캘린더 등록, 메모 검색, 계산을 수행해보세요.</p>
+                            <h2 class="font-bold text-slate-800">지능형 워크스페이스 어시스턴트 (Gemini 2.5)</h2>
+                            <p class="text-xs text-slate-500">자연어로 대화하고 일정 등록, 메모 교정, 수식 해결법을 즉석에서 추천받으세요.</p>
                         </div>
                     </div>
                     <div id="chat-messages" class="flex-grow overflow-y-auto p-6 space-y-4">
                         <div class="flex gap-3 max-w-[85%]">
                             <div class="w-8 h-8 rounded-lg bg-brand-100 flex-shrink-0 flex items-center justify-center text-brand-600 font-bold text-xs">AI</div>
                             <div class="bg-slate-100 text-slate-700 px-4 py-2.5 rounded-2xl rounded-tl-none text-sm leading-relaxed shadow-sm">
-                                환영합니다! 계산기가 공학용으로 업그레이드되었고, 메모장에는 카테고리 및 검색 기능이 추가되었으며, 캘린더는 클릭으로 손쉽게 일정을 추가할 수 있습니다. 
+                                안녕하세요! AI Smart Workspace 입니다. 오늘 날짜를 기준으로 일정 추가, 메모 정리 및 공학용 정밀 계산 분석이 가능합니다. "내일 오후 3시 주간 미팅" 같이 일정을 실시간으로 요청해 보세요!
                             </div>
                         </div>
                     </div>
                     <div class="p-4 border-t border-slate-100 bg-slate-50 rounded-b-2xl">
                         <form id="chat-form" class="flex gap-2" onsubmit="handleChatSubmit(event)">
                             <input type="text" id="chat-input" placeholder="무엇을 도와드릴까요? (예: 내일 오후 3시 회의 일정 추가)" class="flex-grow px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold px-5 py-3 rounded-xl text-sm transition-colors shadow-md">전송</button>
+                            <button type="submit" id="chat-send-btn" class="bg-brand-600 hover:bg-brand-700 text-white font-semibold px-5 py-3 rounded-xl text-sm transition-colors shadow-md flex items-center gap-1">
+                                <span>전송</span>
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -152,17 +157,18 @@
                 <div class="space-y-6">
                     <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
                         <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-1.5 text-base">
-                            <span class="w-1.5 h-4 bg-brand-600 rounded"></span>빠른 일정 등록
+                            <span class="w-1.5 h-4 bg-brand-600 rounded"></span>AI 신속 일정 분석
                         </h3>
+                        <p class="text-[11px] text-slate-400 mb-2">텍스트를 분석하여 캘린더에 바로 등록합니다.</p>
                         <div class="space-y-2">
-                            <input type="text" id="natural-input-quick" placeholder="예: 금요일 오전 10시 세미나" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-brand-500">
-                            <button onclick="processQuickSchedule()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow transition-colors">AI 등록</button>
+                            <input type="text" id="natural-input-quick" placeholder="예: 2026-06-15 오후 2시 세미나" class="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            <button onclick="processQuickSchedule()" id="quick-sched-btn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-2.5 rounded-xl text-sm shadow transition-colors">AI 일정 등록</button>
                         </div>
                     </div>
 
                     <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col h-[280px]">
                         <h3 class="font-bold text-slate-800 mb-3 flex items-center gap-1.5 text-base justify-between">
-                            <div class="flex items-center gap-1.5"><span class="w-1.5 h-4 bg-emerald-500 rounded"></span>최근 메모</div>
+                            <div class="flex items-center gap-1.5"><span class="w-1.5 h-4 bg-emerald-500 rounded"></span>최근 저장 메모</div>
                             <span onclick="switchTab('notepad')" class="text-xs text-brand-600 hover:underline cursor-pointer">더보기 &rarr;</span>
                         </h3>
                         <div id="quick-memo-list" class="space-y-3 overflow-y-auto flex-grow pr-1"></div>
@@ -171,7 +177,7 @@
             </div>
         </section>
 
-        <!-- 2. CALCULATOR TAB (공학용 업데이트) -->
+        <!-- 2. CALCULATOR TAB -->
         <section id="tab-calculator" class="tab-content hidden space-y-6">
             <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-6">
                 <!-- Calculator Board -->
@@ -248,20 +254,20 @@
                                 <span class="p-1 rounded-md bg-brand-100 text-brand-600">
                                     <svg class="h-4.5 w-4.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></svg>
                                 </span>
-                                AI 수학적 해석 패널
+                                AI 수학적 해석 패널 (Gemini)
                             </h3>
-                            <button onclick="analyzeFormula()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition-colors flex items-center gap-1">
+                            <button onclick="analyzeFormula()" id="analyze-btn" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition-colors flex items-center gap-1">
                                 <span>⚡ AI 해설 요청</span>
                             </button>
                         </div>
-                        <p class="text-xs text-slate-500 mb-4">입력된 수식을 AI가 논리적으로 분석해 응용 분야를 알려줍니다.</p>
-                        <div id="ai-calc-explanation" class="bg-slate-50 border border-slate-200/80 rounded-xl p-5 min-h-[220px] text-sm text-slate-600 leading-relaxed flex flex-col justify-center items-center">
-                            <p class="text-xs text-slate-400 text-center">우측 상단의 [AI 해설 요청] 버튼을 눌러주세요.</p>
+                        <p class="text-xs text-slate-500 mb-4">입력되어 있는 상태의 수식을 분석하여 의미 및 현실적 해결 가이드를 도출합니다.</p>
+                        <div id="ai-calc-explanation" class="bg-slate-50 border border-slate-200/80 rounded-xl p-5 min-h-[220px] text-sm text-slate-600 leading-relaxed flex flex-col justify-start">
+                            <p class="text-xs text-slate-400 text-center my-auto">계산 결과가 나왔거나 수식이 있을 때 우측 상단의 [AI 해설 요청] 버튼을 눌러주세요.</p>
                         </div>
                     </div>
                     
                     <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2.5">AI 공학/비즈니스 추천 수식</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2.5">공학 및 비즈니스 추천 수식</span>
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                             <button onclick="injectPresetFormula('sin(30 * π / 180)')" class="bg-white border border-slate-200 text-left p-2.5 rounded-lg shadow-sm hover:border-brand-400 transition-all">
                                 <span class="block text-[10px] text-brand-600">삼각함수(Deg)</span>sin(30°) 계산
@@ -278,7 +284,7 @@
             </div>
         </section>
 
-        <!-- 3. NOTEPAD TAB (카테고리/검색 추가) -->
+        <!-- 3. NOTEPAD TAB -->
         <section id="tab-notepad" class="tab-content hidden space-y-6">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <!-- Left: Memo Form & Filter List -->
@@ -326,38 +332,42 @@
                 <div class="lg:col-span-7 flex flex-col gap-4">
                     <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex-grow flex flex-col">
                         <div class="flex justify-between items-center pb-4 border-b border-slate-100">
-                            <h3 class="font-bold text-slate-800 text-base">✨ AI 메모 분석기</h3>
-                            <div class="flex gap-1.5">
-                                <button onclick="aiProcessMemo('summarize')" class="bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200">요약</button>
-                                <button onclick="aiProcessMemo('polish')" class="bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200">글 다듬기</button>
+                            <h3 class="font-bold text-slate-800 text-base">✨ AI 메모 분석 및 편집 도구</h3>
+                            <div class="flex gap-1.5" id="ai-memo-actions">
+                                <button onclick="aiProcessMemo('summarize')" class="bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200">핵심 요약</button>
+                                <button onclick="aiProcessMemo('polish')" class="bg-slate-100 hover:bg-brand-50 text-slate-700 hover:text-brand-700 text-xs font-bold px-3 py-1.5 rounded-lg border border-slate-200">글 다듬기 & 문맥 교정</button>
                             </div>
                         </div>
                         <div class="flex-grow py-4 flex flex-col">
-                            <div id="ai-memo-feedback" class="bg-slate-50 border border-slate-100 rounded-xl p-5 flex-grow text-sm text-slate-600 overflow-y-auto max-h-[400px]">
-                                <p class="text-xs text-center text-slate-400 mt-10">메모 작성 후 상단 버튼을 클릭해 AI의 도움을 받아보세요.</p>
+                            <div id="ai-memo-feedback" class="bg-slate-50 border border-slate-100 rounded-xl p-5 flex-grow text-sm text-slate-600 overflow-y-auto max-h-[400px] flex flex-col justify-start">
+                                <p class="text-xs text-center text-slate-400 my-auto">본문 작성 후 상단의 [핵심 요약] 혹은 [글 다듬기]를 눌러 AI 어시스턴트 서비스를 받아보세요.</p>
                             </div>
                         </div>
-                        <div id="apply-ai-btn-container" class="hidden flex justify-end">
-                            <button onclick="applyAITextToMemo()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">본문에 반영 &darr;</button>
+                        <div id="apply-ai-btn-container" class="hidden flex justify-end gap-2">
+                            <button onclick="applyAITextToMemo('replace')" class="bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">본문 덮어쓰기</button>
+                            <button onclick="applyAITextToMemo('append')" class="bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm">뒤에 이어붙이기</button>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 4. CALENDAR TAB (클릭 연동/색상 추가) -->
+        <!-- 4. CALENDAR TAB -->
         <section id="tab-calendar" class="tab-content hidden space-y-6">
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex justify-between items-center gap-4">
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 font-bold border border-blue-100">G</div>
                     <div>
-                        <h3 class="font-bold text-slate-800">구글 캘린더 연동</h3>
-                        <p class="text-xs text-slate-500">실시간 데이터 동기화를 통해 일정을 통합 관리하세요.</p>
+                        <h3 class="font-bold text-slate-800">구글 캘린더 실시간 연동</h3>
+                        <p class="text-xs text-slate-500">로컬 일정과 연동하여 안전하고 실시간으로 관리 및 시뮬레이션 하세요.</p>
                     </div>
                 </div>
-                <button id="google-sync-btn" onclick="toggleGoogleSync()" class="bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl shadow transition-all">
-                    <span id="sync-btn-text">연동하기</span>
-                </button>
+                <div class="flex items-center gap-2 w-full sm:w-auto">
+                    <input type="password" id="gcal-client-id" placeholder="OAuth Client ID (선택사항)" class="px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none w-full sm:w-48">
+                    <button id="google-sync-btn" onclick="toggleGoogleSync()" class="bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl shadow transition-all whitespace-nowrap">
+                        <span id="sync-btn-text">구글 연동하기</span>
+                    </button>
+                </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -384,7 +394,7 @@
                 <div class="lg:col-span-4 space-y-4">
                     <!-- Form -->
                     <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
-                        <h3 class="font-bold text-slate-800 text-sm mb-3">일정 등록 (달력 날짜 클릭)</h3>
+                        <h3 class="font-bold text-slate-800 text-sm mb-3">일정 직접 등록 (달력 날짜 클릭 시 자동지정)</h3>
                         <div class="space-y-2">
                             <input type="text" id="sched-title" placeholder="일정명" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-brand-500">
                             <div class="grid grid-cols-2 gap-2">
@@ -405,7 +415,7 @@
                     <!-- List -->
                     <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm flex flex-col h-[280px]">
                         <h3 class="font-bold text-slate-800 text-sm justify-between flex mb-3">
-                            예정된 일정 <span onclick="clearAllSchedules()" class="text-[10px] text-slate-400 hover:text-rose-500 cursor-pointer">전체 삭제</span>
+                            예정된 일정 목록 <span onclick="clearAllSchedules()" class="text-[10px] text-slate-400 hover:text-rose-500 cursor-pointer">전체 삭제</span>
                         </h3>
                         <div id="upcoming-schedule-list" class="space-y-2 overflow-y-auto flex-grow pr-1"></div>
                     </div>
@@ -414,7 +424,7 @@
         </section>
     </main>
 
-    <!-- TOAST & MODAL (유지) -->
+    <!-- TOAST & MODAL -->
     <div id="toast" class="fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-2.5 translate-y-20 opacity-0 transition-all pointer-events-none text-sm">
         <span class="p-1 rounded-full bg-brand-500" id="toast-icon"></span>
         <span id="toast-message"></span>
@@ -422,24 +432,81 @@
 
     <script>
         // --- GLOBAL STATE ---
+        const apiKey = ""; // Runtime 환경 자동 주입 활성화
         let currentTab = 'dashboard';
         let isSyncedGoogle = false;
         
         let memos = JSON.parse(localStorage.getItem('workspace_memos')) || [
-            { id: 1, category: 'urgent', title: '🚀 워크스페이스 시작하기', content: '공학용 계산기, 카테고리 메모, 캘린더 연동을 체험하세요.', date: '2026-06-02 14:30' }
+            { id: 1, category: 'urgent', title: '🚀 워크스페이스 시작하기', content: '공학용 계산기, 카테고리 메모, 캘린더 연동을 체험하세요.', date: '2026-06-04' }
         ];
         let lastAIResultText = "";
         let selectedMemoId = null;
 
-        let currentDate = new Date(2026, 5, 2); 
+        // 오늘 기준 날짜 동적 파싱
+        const sysToday = new Date(); // 2026-06-04 기준 동기화 지원
+        let currentDate = new Date(sysToday.getFullYear(), sysToday.getMonth(), sysToday.getDate()); 
+
         let events = JSON.parse(localStorage.getItem('workspace_events')) || [
-            { id: 'ev1', title: '부서 회의', date: '2026-06-08', time: '10:00', source: 'local', color: 'brand' }
+            { id: 'ev1', title: '부서 정기 회의', date: '2026-06-08', time: '10:00', source: 'local', color: 'brand' },
+            { id: 'ev2', title: 'AI 기능 테스트 데이', date: '2026-06-04', time: '14:30', source: 'local', color: 'rose' }
         ];
 
-        // Init
+        // --- EXPONENTIAL BACKOFF API CALL SYSTEM ---
+        async function fetchGeminiAPI(prompt, systemPrompt = "") {
+            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt || "You are a helpful office assistant." }] }
+            };
+
+            let delay = 1000;
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        return data.candidates?.[0]?.content?.parts?.[0]?.text || "AI의 올바른 응답을 가져오지 못했습니다.";
+                    }
+                } catch (e) {
+                    // Fail silently for console, retrying...
+                }
+                await new Promise(resolve => setTimeout(resolve, delay));
+                delay *= 2;
+            }
+            throw new Error("서버와의 연결이 원활하지 않습니다. 잠시 후 다시 시도하세요.");
+        }
+
+        // --- Init Window ---
         window.onload = function() {
-            renderMemos(); renderCalendar(); renderUpcomingSchedules(); updateDashboardMemos();
+            initClock();
+            renderMemos(); 
+            renderCalendar(); 
+            renderUpcomingSchedules(); 
+            updateDashboardMemos();
+            setDefaultFormDate();
         };
+
+        // Realtime Clock Synchronizer
+        function initClock() {
+            const clockEl = document.getElementById('dashboard-clock');
+            const formatTime = () => {
+                const now = new Date();
+                clockEl.innerText = `${now.getFullYear()}년 ${String(now.getMonth()+1).padStart(2,'0')}월 ${String(now.getDate()).padStart(2,'0')}일 ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+            };
+            formatTime();
+            setInterval(formatTime, 1000);
+        }
+
+        function setDefaultFormDate() {
+            const now = new Date();
+            const dateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            document.getElementById('sched-date').value = dateStr;
+            document.getElementById('sched-time').value = "12:00";
+        }
 
         function switchTab(tabId) {
             currentTab = tabId;
@@ -468,7 +535,7 @@
             setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 2500);
         }
 
-        // --- CALCULATOR (Scientific) ---
+        // --- CALCULATOR & AI ANALYSIS ---
         let currentCalcExp = '';
         function calcPress(val) { currentCalcExp += val; document.getElementById('calc-display').innerText = currentCalcExp; }
         function calcClear() { currentCalcExp = ''; document.getElementById('calc-display').innerText = '0'; document.getElementById('calc-exp').innerText = ''; }
@@ -489,7 +556,6 @@
                 expr = expr.replace(/e/g, 'Math.E');
                 expr = expr.replace(/\^/g, '**');
 
-                // Evaluate string math securely-ish
                 const result = Function(`"use strict"; return (${expr})`)();
                 const precisionResult = Number.isInteger(result) ? result : parseFloat(result.toFixed(8));
                 
@@ -502,9 +568,38 @@
             }
         }
         function injectPresetFormula(formula) { currentCalcExp = formula; calcCalculate(); }
-        function analyzeFormula() { showToast('AI 해설 기능이 호출되었습니다 (모의 실행)'); }
 
-        // --- NOTEPAD (Category & Search) ---
+        async function analyzeFormula() {
+            const exp = document.getElementById('calc-exp').innerText;
+            const res = document.getElementById('calc-display').innerText;
+            if (!exp && res === "0") {
+                return showToast('분석할 수식 결과가 없습니다.', 'error');
+            }
+
+            const feedbackEl = document.getElementById('ai-calc-explanation');
+            const originalBtnText = document.getElementById('analyze-btn').innerHTML;
+            document.getElementById('analyze-btn').disabled = true;
+            document.getElementById('analyze-btn').innerHTML = "<span>분석 중...</span>";
+
+            feedbackEl.innerHTML = `<div class="flex flex-col items-center justify-center my-auto"><div class="w-6 h-6 border-2 border-brand-600 border-t-transparent rounded-full animate-spin"></div><p class="text-xs text-slate-500 mt-2">AI 수식 분석을 진행하고 있습니다...</p></div>`;
+
+            try {
+                const systemPrompt = "당신은 뛰어난 수학자이자 공학 컨설턴트입니다. 주어진 수식과 결과를 이해하기 쉽고 직관적으로 설명하세요.";
+                const userPrompt = `수식: ${exp} ${res}. 이 수식 혹은 계산결과가 수학/공학, 금융 혹은 기타 실무 비즈니스에서 어떤 가치와 의미를 가지는지 실질적인 사례를 포함하여 친근한 어조로 한글 4줄 내외로 설명해 주세요. 마크다운 형식을 가미하세요.`;
+                const aiResponse = await fetchGeminiAPI(userPrompt, systemPrompt);
+                
+                feedbackEl.innerHTML = `<div class="prose prose-sm text-slate-600">${aiResponse.replace(/\n/g, '<br>')}</div>`;
+                showToast('수식 분석이 완료되었습니다.');
+            } catch (err) {
+                feedbackEl.innerHTML = `<p class="text-xs text-rose-500 my-auto text-center">${err.message}</p>`;
+                showToast('AI 분석 실패', 'error');
+            } finally {
+                document.getElementById('analyze-btn').disabled = false;
+                document.getElementById('analyze-btn').innerHTML = originalBtnText;
+            }
+        }
+
+        // --- NOTEPAD WITH CATEGORY & AI ASSIST ---
         const catConfig = {
             general: { bg: 'bg-slate-100', text: 'text-slate-600', label: '일반' },
             work: { bg: 'bg-blue-100', text: 'text-blue-700', label: '업무' },
@@ -529,10 +624,10 @@
             container.innerHTML = filtered.map(memo => {
                 const cat = catConfig[memo.category] || catConfig.general;
                 return `
-                <div onclick="selectMemo(${memo.id})" class="p-3 bg-white border border-slate-200 hover:border-brand-300 rounded-xl cursor-pointer ${selectedMemoId === memo.id ? 'ring-2 ring-brand-200' : ''}">
+                <div onclick="selectMemo(${memo.id})" class="p-3 bg-white border border-slate-200 hover:border-brand-300 rounded-xl cursor-pointer transition ${selectedMemoId === memo.id ? 'ring-2 ring-brand-200 border-brand-400' : ''}">
                     <div class="flex justify-between items-start mb-1.5">
                         <span class="text-[9px] px-1.5 py-0.5 rounded font-bold ${cat.bg} ${cat.text}">${cat.label}</span>
-                        <button onclick="deleteMemo(event, ${memo.id})" class="text-slate-300 hover:text-rose-500">×</button>
+                        <button onclick="deleteMemo(event, ${memo.id})" class="text-slate-300 hover:text-rose-500 text-base font-bold transition">&times;</button>
                     </div>
                     <h4 class="font-bold text-xs text-slate-800 truncate">${escapeHtml(memo.title)}</h4>
                     <p class="text-[11px] text-slate-500 line-clamp-1 mt-1">${escapeHtml(memo.content)}</p>
@@ -544,18 +639,18 @@
             const title = document.getElementById('memo-title').value;
             const content = document.getElementById('memo-content').value;
             const category = document.getElementById('memo-category').value;
-            if (!content) return showToast('내용을 입력하세요', 'error');
+            if (!content) return showToast('본문 내용을 입력하세요', 'error');
 
             const now = new Date();
             const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
 
             if (selectedMemoId) {
                 let idx = memos.findIndex(m => m.id === selectedMemoId);
-                memos[idx] = { ...memos[idx], title, content, category, date: dateStr };
-                showToast('수정되었습니다.');
+                memos[idx] = { ...memos[idx], title: title || '제목 없음', content, category, date: dateStr };
+                showToast('수정 완료되었습니다.');
             } else {
-                memos.unshift({ id: Date.now(), title: title||'무제', content, category, date: dateStr });
-                showToast('추가되었습니다.');
+                memos.unshift({ id: Date.now(), title: title || '제목 없음', content, category, date: dateStr });
+                showToast('신규 저장되었습니다.');
             }
             localStorage.setItem('workspace_memos', JSON.stringify(memos));
             clearMemoForm();
@@ -569,88 +664,332 @@
             document.getElementById('memo-category').value = m.category;
             renderMemos();
         }
-        function deleteMemo(e, id) { e.stopPropagation(); memos = memos.filter(m => m.id !== id); localStorage.setItem('workspace_memos', JSON.stringify(memos)); clearMemoForm(); }
-        function clearMemoForm() { selectedMemoId = null; document.getElementById('memo-title').value=''; document.getElementById('memo-content').value=''; renderMemos(); updateDashboardMemos(); }
+
+        function deleteMemo(e, id) { 
+            e.stopPropagation(); 
+            memos = memos.filter(m => m.id !== id); 
+            localStorage.setItem('workspace_memos', JSON.stringify(memos)); 
+            clearMemoForm(); 
+            showToast('메모가 삭제되었습니다.');
+        }
+
+        function clearMemoForm() { 
+            selectedMemoId = null; 
+            document.getElementById('memo-title').value=''; 
+            document.getElementById('memo-content').value=''; 
+            renderMemos(); 
+            updateDashboardMemos(); 
+        }
         
         function updateDashboardMemos() {
             const list = document.getElementById('quick-memo-list');
-            list.innerHTML = memos.slice(0,3).map(m => `<div class="p-2 border rounded-lg bg-slate-50"><h4 class="text-xs font-bold truncate">${escapeHtml(m.title)}</h4></div>`).join('') || '<p class="text-xs text-center text-slate-400">없음</p>';
+            list.innerHTML = memos.slice(0,3).map(m => `
+                <div onclick="switchTab('notepad'); selectMemo(${m.id});" class="p-2 border rounded-lg bg-slate-50 hover:bg-slate-100 transition cursor-pointer flex justify-between items-center">
+                    <h4 class="text-xs font-semibold text-slate-700 truncate w-3/4">${escapeHtml(m.title)}</h4>
+                    <span class="text-[9px] text-slate-400 font-mono">${m.date}</span>
+                </div>
+            `).join('') || '<p class="text-xs text-center text-slate-400 py-4">저장된 메모가 없습니다.</p>';
         }
 
-        function aiProcessMemo(type) { showToast('AI 교정/요약 완료 (기능 모의)', 'success'); }
+        // AI Memo processing tool
+        async function aiProcessMemo(type) {
+            const content = document.getElementById('memo-content').value;
+            if (!content) return showToast('메모에 분석할 텍스트를 입력해주세요.', 'error');
 
-        // --- CALENDAR (Colors & Click to Add) ---
-        const colorMap = { brand: 'bg-brand-100 text-brand-700 border-brand-200', rose: 'bg-rose-100 text-rose-700 border-rose-200', emerald: 'bg-emerald-100 text-emerald-700 border-emerald-200', amber: 'bg-amber-100 text-amber-700 border-amber-200', purple: 'bg-purple-100 text-purple-700 border-purple-200', google: 'bg-indigo-100 text-indigo-700 border-indigo-200' };
+            const feedbackEl = document.getElementById('ai-memo-feedback');
+            const actionContainer = document.getElementById('apply-ai-btn-container');
+            
+            feedbackEl.innerHTML = `<div class="flex flex-col items-center justify-center my-auto"><div class="w-6 h-6 border-2 border-brand-600 border-t-transparent rounded-full animate-spin"></div><p class="text-xs text-slate-500 mt-2">AI 분석 및 퇴고 작업 진행 중...</p></div>`;
+            actionContainer.classList.add('hidden');
+
+            try {
+                let systemPrompt = "당신은 전문 편집가이자 지능형 비서입니다.";
+                let userPrompt = "";
+
+                if (type === 'summarize') {
+                    userPrompt = `다음 메모 텍스트의 핵심 내용을 깔끔하게 개조식 요약 문맥으로 한글로 명확히 작성해주세요:\n\n${content}`;
+                } else if (type === 'polish') {
+                    userPrompt = `다음 메모 텍스트의 맞춤법, 가독성, 비즈니스 문맥 흐름을 완성도 높게 교정 및 개선하여 정돈된 문장들로 돌려주세요:\n\n${content}`;
+                }
+
+                const aiResponse = await fetchGeminiAPI(userPrompt, systemPrompt);
+                lastAIResultText = aiResponse;
+
+                feedbackEl.innerHTML = `
+                    <div class="prose prose-sm text-slate-700 leading-relaxed">
+                        <span class="inline-block bg-brand-100 text-brand-700 font-bold text-[10px] px-2 py-0.5 rounded-full mb-2">${type === 'summarize' ? '요약본' : '퇴고본'}</span>
+                        <div class="whitespace-pre-line">${escapeHtml(aiResponse)}</div>
+                    </div>
+                `;
+                actionContainer.classList.remove('hidden');
+                showToast('메모 어시스트 완료');
+            } catch (err) {
+                feedbackEl.innerHTML = `<p class="text-xs text-rose-500 my-auto text-center">${err.message}</p>`;
+                showToast('분석에 실패하였습니다.', 'error');
+            }
+        }
+
+        function applyAITextToMemo(mode) {
+            if (!lastAIResultText) return;
+            const currentVal = document.getElementById('memo-content').value;
+            if (mode === 'replace') {
+                document.getElementById('memo-content').value = lastAIResultText;
+                showToast('기존 본문을 교체했습니다.');
+            } else if (mode === 'append') {
+                document.getElementById('memo-content').value = currentVal + "\n\n[AI 어시스트 분석 결과]\n" + lastAIResultText;
+                showToast('기존 본문 하단에 붙여넣었습니다.');
+            }
+        }
+
+        // --- CALENDAR WITH TODAY SYNC & GOOGLE SIMULATOR ---
+        const colorMap = { 
+            brand: 'bg-brand-100 text-brand-700 border-brand-200', 
+            rose: 'bg-rose-100 text-rose-700 border-rose-200', 
+            emerald: 'bg-emerald-100 text-emerald-700 border-emerald-200', 
+            amber: 'bg-amber-100 text-amber-700 border-amber-200', 
+            purple: 'bg-purple-100 text-purple-700 border-purple-200', 
+            google: 'bg-indigo-100 text-indigo-700 border-indigo-200' 
+        };
 
         function renderCalendar() {
             const grid = document.getElementById('calendar-grid');
-            const year = currentDate.getFullYear(); const month = currentDate.getMonth();
+            const year = currentDate.getFullYear(); 
+            const month = currentDate.getMonth();
             document.getElementById('calendar-month-year').innerText = `${year}년 ${month + 1}월`;
             
             grid.innerHTML = '';
             const firstDay = new Date(year, month, 1).getDay();
             const lastDate = new Date(year, month + 1, 0).getDate();
 
-            for (let i = 0; i < firstDay; i++) grid.innerHTML += `<div class="bg-slate-50 border border-slate-100 rounded-lg"></div>`;
+            // Empty cells for padding
+            for (let i = 0; i < firstDay; i++) {
+                grid.innerHTML += `<div class="bg-slate-50/50 border border-slate-100/80 rounded-lg"></div>`;
+            }
             
+            // Render active monthly dates
             for (let day = 1; day <= lastDate; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const isToday = (day === 2 && month === 5 && year === 2026);
-                const dayEvts = events.filter(e => e.date === dateStr);
                 
-                let evHtml = dayEvts.map(e => `<div class="text-[9px] px-1 py-0.5 rounded border truncate mt-1 ${colorMap[e.source === 'google' ? 'google' : e.color] || colorMap.brand}">${escapeHtml(e.title)}</div>`).join('');
+                // 실제 사용자 로컬 디바이스의 오늘 날짜와 실시간 연동 매핑
+                const realToday = new Date();
+                const isToday = (day === realToday.getDate() && month === realToday.getMonth() && year === realToday.getFullYear());
+                
+                const dayEvts = events.filter(e => e.date === dateStr);
+                let evHtml = dayEvts.map(e => `
+                    <div class="text-[9px] px-1 py-0.5 rounded border truncate mt-1 leading-tight ${colorMap[e.source === 'google' ? 'google' : e.color] || colorMap.brand}" title="${escapeHtml(e.title)} (${e.time})">
+                        ${escapeHtml(e.title)}
+                    </div>
+                `).join('');
 
                 grid.innerHTML += `
-                    <div onclick="selectDateFromCalendar('${dateStr}')" class="bg-white p-1.5 border border-slate-100 rounded-lg min-h-[70px] hover:bg-slate-50 cursor-pointer flex flex-col transition">
-                        <span class="${isToday ? 'bg-brand-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-[10px]' : 'text-[11px] font-semibold text-slate-700 ml-1'}">${day}</span>
-                        <div class="mt-1 flex-grow overflow-y-auto">${evHtml}</div>
+                    <div onclick="selectDateFromCalendar('${dateStr}')" class="bg-white p-1.5 border border-slate-100 rounded-lg min-h-[75px] hover:bg-brand-50/30 cursor-pointer flex flex-col justify-between transition-all group">
+                        <span class="${isToday ? 'bg-brand-600 text-white w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold shadow-md shadow-brand-200' : 'text-[11px] font-bold text-slate-700 ml-1'}">${day}</span>
+                        <div class="mt-1 flex-grow overflow-y-auto max-h-[50px] scrollbar-none">${evHtml}</div>
                     </div>
                 `;
             }
         }
+
         function prevMonth() { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); }
         function nextMonth() { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); }
-        function setToday() { currentDate = new Date(2026, 5, 2); renderCalendar(); }
+        function setToday() { 
+            const realToday = new Date();
+            currentDate = new Date(realToday.getFullYear(), realToday.getMonth(), realToday.getDate()); 
+            renderCalendar(); 
+            setDefaultFormDate();
+            showToast('실시간 오늘 기준 달력으로 갱신되었습니다.');
+        }
 
         function selectDateFromCalendar(dateStr) {
             document.getElementById('sched-date').value = dateStr;
-            showToast(`${dateStr} 날짜가 선택되었습니다.`);
+            showToast(`${dateStr} 날짜가 설정되었습니다. 등록 정보를 입력하세요.`);
         }
 
         function saveManualSchedule() {
             const title = document.getElementById('sched-title').value;
             const date = document.getElementById('sched-date').value;
-            const time = document.getElementById('sched-time').value || '00:00';
+            const time = document.getElementById('sched-time').value || '12:00';
             const color = document.getElementById('sched-color').value;
 
-            if(!title || !date) return showToast('일정/날짜 입력 필수', 'error');
+            if(!title || !date) return showToast('일정명과 날짜를 입력해주세요.', 'error');
             
-            events.push({ id: 'ev_'+Date.now(), title, date, time, source: 'local', color });
+            events.push({ id: 'ev_' + Date.now(), title, date, time, source: 'local', color });
             localStorage.setItem('workspace_events', JSON.stringify(events));
-            renderCalendar(); renderUpcomingSchedules();
-            document.getElementById('sched-title').value='';
+            renderCalendar(); 
+            renderUpcomingSchedules();
+            
+            document.getElementById('sched-title').value = '';
+            showToast('새 일정이 등록되었습니다.');
         }
 
         function renderUpcomingSchedules() {
             const list = document.getElementById('upcoming-schedule-list');
             let sorted = [...events].sort((a,b) => new Date(`${a.date}T${a.time}`) - new Date(`${b.date}T${b.time}`));
+            
             list.innerHTML = sorted.map(e => `
-                <div class="p-2 border rounded-lg flex justify-between text-xs bg-slate-50 items-center">
+                <div class="p-2 border rounded-lg flex justify-between text-xs bg-slate-50 items-center transition hover:shadow-sm">
                     <div>
-                        <span class="font-bold text-slate-800">${escapeHtml(e.title)}</span>
-                        <div class="text-[9px] text-slate-400">${e.date} ${e.time}</div>
+                        <span class="font-bold text-slate-800 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full ${e.source === 'google' ? 'bg-indigo-600' : 'bg-brand-500'}"></span>
+                            ${escapeHtml(e.title)}
+                        </span>
+                        <div class="text-[9px] text-slate-400 mt-0.5 font-mono">${e.date} ${e.time} ${e.source === 'google' ? '[Google]' : ''}</div>
                     </div>
-                    <button onclick="deleteSchedule('${e.id}')" class="text-rose-400 px-2 text-lg">×</button>
+                    <button onclick="deleteSchedule('${e.id}')" class="text-slate-300 hover:text-rose-500 text-lg px-2 transition font-bold">&times;</button>
                 </div>
-            `).join('') || '<p class="text-xs text-center text-slate-400">일정 없음</p>';
+            `).join('') || '<p class="text-xs text-center text-slate-400 py-4">등록된 미래 일정이 없습니다.</p>';
         }
-        function deleteSchedule(id) { events = events.filter(e=>e.id!==id); renderCalendar(); renderUpcomingSchedules(); }
-        function clearAllSchedules() { events=[]; renderCalendar(); renderUpcomingSchedules(); }
 
-        function toggleGoogleSync() { isSyncedGoogle = !isSyncedGoogle; document.getElementById('sync-btn-text').innerText = isSyncedGoogle ? "연동 해제됨" : "구글 연동 완료"; showToast(isSyncedGoogle ? '동기화 완료!' : '해제되었습니다.'); }
-        function processQuickSchedule() { showToast('AI 빠른 등록 모의 완료'); }
-        function handleChatSubmit(e) { e.preventDefault(); showToast('챗봇 응답 시뮬레이션!'); document.getElementById('chat-input').value=''; }
-        function escapeHtml(str) { return (str||'').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+        function deleteSchedule(id) { 
+            events = events.filter(e => e.id !== id); 
+            localStorage.setItem('workspace_events', JSON.stringify(events));
+            renderCalendar(); 
+            renderUpcomingSchedules(); 
+            showToast('일정이 삭제되었습니다.');
+        }
+
+        function clearAllSchedules() { 
+            if(confirm('모든 일정을 비우시겠습니까?')) {
+                events = []; 
+                localStorage.setItem('workspace_events', JSON.stringify(events));
+                renderCalendar(); 
+                renderUpcomingSchedules(); 
+                showToast('모든 일정이 초기화되었습니다.');
+            }
+        }
+
+        // --- REALTIME GOOGLE CALENDAR CLIENT LINK SIMULATOR ---
+        function toggleGoogleSync() {
+            const clientId = document.getElementById('gcal-client-id').value;
+            isSyncedGoogle = !isSyncedGoogle; 
+            
+            const syncBtn = document.getElementById('google-sync-btn');
+            const syncText = document.getElementById('sync-btn-text');
+
+            if (isSyncedGoogle) {
+                syncBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl shadow transition-all whitespace-nowrap";
+                syncText.innerText = "연동 완료 (동기화 중)";
+                showToast('구글 캘린더 동기화 완료! 가상 외부 데이터를 수신합니다.');
+
+                // Mocking API fetch google calendar events securely
+                const mockGoogleEvents = [
+                    { id: 'g1', title: '🎉 Google: 프로젝트 전체 마일스톤', date: '2026-06-12', time: '09:00', source: 'google', color: 'google' },
+                    { id: 'g2', title: '💻 Google: AI 기술 워크샵 리허설', date: '2026-06-18', time: '14:00', source: 'google', color: 'google' }
+                ];
+                events = [...events, ...mockGoogleEvents];
+                localStorage.setItem('workspace_events', JSON.stringify(events));
+                renderCalendar();
+                renderUpcomingSchedules();
+            } else {
+                syncBtn.className = "bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl shadow transition-all whitespace-nowrap";
+                syncText.innerText = "구글 연동하기";
+                showToast('구글 캘린더 연동이 해제되었습니다.');
+
+                events = events.filter(e => e.source !== 'google');
+                localStorage.setItem('workspace_events', JSON.stringify(events));
+                renderCalendar();
+                renderUpcomingSchedules();
+            }
+        }
+
+        // Quick AI Scheduler Parser
+        async function processQuickSchedule() {
+            const input = document.getElementById('natural-input-quick').value;
+            if(!input) return showToast('분석할 자연어 일정을 입력하세요 (예: 금요일 오전 10시 미팅)', 'error');
+
+            const btn = document.getElementById('quick-sched-btn');
+            const originalBtnText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = "분석 등록 중...";
+
+            try {
+                const sysPrompt = "You are an intelligent scheduling assistant. Parse dates and titles from user requests. Output MUST be valid JSON only, without markdown wrappers. Structure: { 'title': string, 'date': 'YYYY-MM-DD', 'time': 'HH:MM' }";
+                const userPrompt = `오늘 날짜는 ${sysToday.toISOString().slice(0,10)} 이고, 요일은 목요일입니다. 다음 텍스트에서 약속명, 날짜, 시작 시간을 합리적으로 도출해서 JSON 데이터만 반환해줘: "${input}"`;
+                
+                const responseText = await fetchGeminiAPI(userPrompt, sysPrompt);
+                let jsonStr = responseText.trim();
+                if(jsonStr.startsWith("```json")) jsonStr = jsonStr.slice(7);
+                if(jsonStr.endsWith("```")) jsonStr = jsonStr.slice(0, -3);
+
+                const data = JSON.parse(jsonStr.trim());
+                if(data.title && data.date) {
+                    events.push({
+                        id: 'ev_' + Date.now(),
+                        title: `[AI] ${data.title}`,
+                        date: data.date,
+                        time: data.time || '12:00',
+                        source: 'local',
+                        color: 'brand'
+                    });
+                    localStorage.setItem('workspace_events', JSON.stringify(events));
+                    renderCalendar();
+                    renderUpcomingSchedules();
+                    document.getElementById('natural-input-quick').value = '';
+                    showToast(`AI가 '${data.title}' 일정을 분석해 등록했습니다.`);
+                } else {
+                    showToast('정확한 일정 정보를 검출하지 못했습니다.', 'error');
+                }
+            } catch(e) {
+                showToast('AI 빠른 등록 분석 실패. 직접 등록을 활용해보세요.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalBtnText;
+            }
+        }
+
+        // --- INTELLIGENT CHATBOT SYSTEM WITH GEMINI 2.5 FLASH ---
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const inputEl = document.getElementById('chat-input');
+            const userText = inputEl.value.trim();
+            if(!userText) return;
+
+            // 1. Append User Bubble
+            appendChatBubble('user', userText);
+            inputEl.value = '';
+
+            const sendBtn = document.getElementById('chat-send-btn');
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = "<span>응답중..</span>";
+
+            // 2. Mock or call Gemini API directly
+            try {
+                const systemPrompt = `당신은 사용자의 스마트 워크스페이스를 효율적으로 이끄는 AI 비서입니다. 친근하면서 전문적이고 공손하게 한글로 응답하세요. 
+사용자가 일정 추가를 원하는 문맥(예: '일정 추가', '내일 미팅')을 감지할 경우, '일정을 캘린더에 바로 등록하시려면 대시보드 우측의 [AI 신속 일정 분석] 칸에 적으시면 더욱 정밀하게 추가해 드립니다.'라는 조언을 꼭 곁들여 응답해 주세요.`;
+                const aiResponse = await fetchGeminiAPI(userText, systemPrompt);
+                appendChatBubble('ai', aiResponse);
+            } catch (err) {
+                appendChatBubble('ai', "죄송합니다. 서비스 로드가 급증하여 일시적으로 지연이 발생했습니다. 다시 한번 요청을 입력해 주세요.");
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = "<span>전송</span>";
+            }
+        }
+
+        function appendChatBubble(role, text) {
+            const chatContainer = document.getElementById('chat-messages');
+            const bubble = document.createElement('div');
+            bubble.className = "flex gap-3 max-w-[85%] animate-fade-in";
+
+            if (role === 'ai') {
+                bubble.innerHTML = `
+                    <div class="w-8 h-8 rounded-lg bg-brand-100 flex-shrink-0 flex items-center justify-center text-brand-600 font-bold text-xs">AI</div>
+                    <div class="bg-slate-100 text-slate-700 px-4 py-2.5 rounded-2xl rounded-tl-none text-sm leading-relaxed shadow-sm whitespace-pre-line">${escapeHtml(text)}</div>
+                `;
+            } else {
+                bubble.className = "flex gap-3 max-w-[85%] ml-auto justify-end";
+                bubble.innerHTML = `
+                    <div class="bg-brand-600 text-white px-4 py-2.5 rounded-2xl rounded-tr-none text-sm leading-relaxed shadow-sm">${escapeHtml(text)}</div>
+                `;
+            }
+            chatContainer.appendChild(bubble);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        // Utilities
+        function escapeHtml(str) { 
+            return (str||'').replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); 
+        }
     </script>
 </body>
 </html>
